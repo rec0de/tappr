@@ -1,0 +1,186 @@
+import QtQuick 2.0
+import Sailfish.Silica 1.0
+import '../data.js' as DB
+
+Page {
+    id: page
+
+    Component.onCompleted: {
+        // Initialize the database
+        DB.initialize();
+        update(ranking);
+    }
+
+    function update(object) {
+        var state = DB.getval(4);
+
+        if(state != 0){
+            object.checked = true;
+        }
+        else{
+            object.checked = false;
+        }
+    }
+
+    function toggle(oid){
+        var state = DB.getval(4);
+
+        if(state != 0){
+            DB.setval(0, 4);
+            update(oid);
+        }
+        else{
+            DB.setval(1, 4);
+            update(oid);
+        }
+    }
+
+    SilicaFlickable {
+        anchors.fill: parent
+        height: parent.height
+        contentHeight: parent.height + 850
+        id: flick
+
+        Column {
+            id: col
+            anchors.fill: parent
+            anchors.margins: Theme.paddingLarge
+            spacing: Theme.paddingMedium
+
+            PageHeader {
+                title: "About & Settings"
+            }
+
+            SectionHeader {
+                text: "Settings"
+            }
+
+            TextSwitch {
+                id: ranking
+                automaticCheck: false
+                text: "Upload highscore for ranking"
+                onClicked: {
+                    toggle(ranking)
+                }
+            }
+
+            RemorseItem {
+                id: remorse
+                onTriggered: DB.setscore(0)
+            }
+
+
+            Button {
+               id: reset
+               anchors.horizontalCenter: parent.horizontalCenter
+               width: parent.width
+               text: "Reset Highscore"
+               onClicked: remorse.execute(reset, "Reset Highscore")
+            }
+
+
+            SectionHeader {
+                text: "License"
+            }
+
+            Label {
+                text: "GPL v2"
+                anchors.horizontalCenter: parent.horizontalCenter
+                MouseArea {
+                    id : licenseMouseArea
+                    anchors.fill : parent
+                    onClicked: Qt.openUrlExternally("http://choosealicense.com/licenses/gpl-v2/")
+                }
+            }
+
+            SectionHeader {
+                text: "Made by"
+            }
+
+            Label {
+                text: "@rec0denet"
+                anchors.horizontalCenter: parent.horizontalCenter
+                MouseArea {
+                    id : madebyMouseArea
+                    anchors.fill : parent
+                    onClicked: Qt.openUrlExternally("http://rec0de.net")
+                }
+            }
+
+            SectionHeader {
+                text: "Source"
+            }
+
+            Label {
+                text: "github.com/rec0de/tappr"
+                font.underline: true;
+                anchors.horizontalCenter: parent.horizontalCenter
+                MouseArea {
+                    id : sourceMouseArea
+                    anchors.fill : parent
+                    onClicked: Qt.openUrlExternally("https://github.com/rec0de/tappr")
+                }
+            }
+
+
+            SectionHeader {
+                text: "Contact"
+            }
+
+            Label {
+                text: "mail@rec0de.net <br> GnuPG available"
+                anchors.horizontalCenter: parent.horizontalCenter
+                MouseArea {
+                    id : contactMouseArea
+                    anchors.fill : parent
+                    onClicked: Qt.openUrlExternally("mailto:mail@rec0de.net")
+                }
+            }
+
+            SectionHeader {
+                text: "Support me?"
+            }
+
+            Button {
+                text: "Tip me (BTC/DOGE)"
+               onClicked: Qt.openUrlExternally("http://rec0de.net/a/tip.php")
+               anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            SectionHeader {
+                text: "About me"
+            }
+
+            Label {
+                id: aboutme
+                text:   'I develop these apps as a hobby. Therefore, please don\'t expect them to work perfect. If you like what I\'m doing, consider liking / commenting the app or following me on twitter. For a developer, knowing that people out there use & like your app is one of the greatest feelings ever.'
+                font.pixelSize: Theme.fontSizeSmall
+                wrapMode: Text.WordWrap
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    leftMargin: Theme.paddingMedium
+                    rightMargin: Theme.paddingMedium
+                }
+            }
+
+            SectionHeader {
+                text: "Thanks"
+            }
+
+            Label {
+                id: body
+                text: 'SHA256 implementation by webtoolkit.info - Thanks!<br>Font by astramat.com<br>Thanks to leszek, developer of \'noto\'.'
+                font.pixelSize: Theme.fontSizeSmall
+                wrapMode: Text.WordWrap
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    leftMargin: Theme.paddingMedium
+                    rightMargin: Theme.paddingMedium
+                }
+            }
+        }
+    }
+
+}
