@@ -13,7 +13,7 @@ Name:       harbour-tappr
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
 Summary:    Tappr
-Version:    0.0.2.0
+Version:    0.0.2.1
 Release:    1
 Group:      Qt/Qt
 License:    GPL v2

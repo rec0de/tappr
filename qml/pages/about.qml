@@ -38,7 +38,7 @@ Page {
     SilicaFlickable {
         anchors.fill: parent
         height: parent.height
-        contentHeight: parent.height + 850
+        contentHeight: parent.height + 900
         id: flick
 
         Column {
