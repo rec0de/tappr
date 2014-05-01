@@ -9,6 +9,7 @@
 // score 2: worldwide rank
 // score 3: unique ID for server communication
 // score 4: enable/disable ranking
+// score 5: enable/disable sound
 
 // First, let's create a short helper function to get the database connection
 function getDatabase() {

@@ -170,7 +170,7 @@ Page {
 
             Label {
                 id: body
-                text: 'SHA256 implementation by webtoolkit.info - Thanks!<br>Font by astramat.com<br>Thanks to leszek, developer of \'noto\'.'
+                text: 'SHA256 implementation by webtoolkit.info<br>Music made with pulseboy.com<br>Font by astramat.com<br>Database derived from \'noto\' by leszek. Thanks to all of you!'
                 font.pixelSize: Theme.fontSizeSmall
                 wrapMode: Text.WordWrap
                 anchors {

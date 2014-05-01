@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Window 2.0
+import QtMultimedia 5.0
 import Sailfish.Silica 1.0
 import "../data.js" as DB
 
@@ -15,20 +16,18 @@ Page {
 
     // Makes the start text blink
     function blink() {
-        if(start.visible == false){
-             start.visible = true;
+        if(start.visible){
+             start.visible = false;
         }
         else {
-             start.visible = false;
+             start.visible = true;
         }
     }
 
     // Pause game and go to about page
     function about() {
         pageStack.push(Qt.resolvedUrl("about.qml"))
-        ticker.running = false;
-        blinker.running = true;
-        start.text = 'tap to resume'
+        pause();
     }
 
     function pause() {
@@ -40,7 +39,7 @@ Page {
     function die() {
         ticker.running = false;        
         blinker.running = true;        
-        score.speed = 4;
+        score.speed = 5;
         if(score.value > DB.getscore()){
             DB.setscore(score.value);
             score.high = score.value;
@@ -114,8 +113,92 @@ Page {
     }
 
 
-    function touch(id) {
+    // Sound stuff starts here
+    SoundEffect{
+        id: c
+        source: '../aud/c.wav'
+    }
 
+    SoundEffect{
+        id: d
+        source: '../aud/d.wav'
+    }
+    SoundEffect{
+        id: e
+        source: '../aud/e.wav'
+    }
+    SoundEffect{
+        id: f
+        source: '../aud/f.wav'
+    }
+    SoundEffect{
+        id: g
+        source: '../aud/g.wav'
+    }
+
+
+    function playnext(){
+        if(!score.mute){
+
+            // Ode to joy by Ludwig van Beethoven (Slightly modified)
+
+            var beat = ['e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'e', 'd', 'd',
+                        'e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'd', 'c', 'c',
+                        'd', 'd', 'e', 'c', 'd', 'f', 'e', 'c', 'd', 'f', 'e', 'd', 'c', 'd', 'g',
+                        'e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'd', 'c', 'c'];
+           var index = score.index;
+
+            if(beat[index] == 'c'){
+               c.play();
+           }
+            else if(beat[index] == 'd'){
+               d.play();
+           }
+            else if(beat[index] == 'e'){
+               e.play();
+           }
+            else if(beat[index] == 'f'){
+               f.play();
+           }
+            else if(beat[index] == 'g'){
+               g.play();
+           }
+
+           score.index = score.index + 1;
+           if(score.index == beat.length){
+               score.index = 0;
+           }
+        }
+
+       }
+    function togglesound(){
+        var soundstate = DB.getval(5);
+        if(soundstate != '0'){
+            DB.setval('0', 5)
+            score.mute = true;
+            mute.source = '../img/mute.png';
+        }
+        else{
+            DB.setval('1', 5);
+            score.mute = false;
+            mute.source = '../img/unmute.png'
+        }
+    }
+
+    function getsound(){
+        if(DB.getval(5) != '0'){
+            mute.source = '../img/unmute.png'
+            return false;
+        }
+        else{
+            mute.source = '../img/mute.png'
+            return true;
+        }
+    }
+
+    // END Sound stuff
+
+    function touch(id) {
 
         if(ticker.running == false && resetter.running == false){
             ticker.running = true;
@@ -128,6 +211,7 @@ Page {
                 id.active = false;
                 id.color = 'transparent';
                 addscore();
+                playnext();
             }
             else{
                 id.active = true;
@@ -154,12 +238,6 @@ Page {
 
     }
 
-    // returns random boolean
-    function ranbool()
-    {
-    return Math.random() >= 0.5;
-    }
-
     function update(tile){
         if(tile.active){
           tile.color = '#ffffff';
@@ -169,89 +247,47 @@ Page {
         }
     }
 
+    //Randomizes a single row
+    function newrandomize(tile1, tile2, tile3, tile4){
+        var ran = Math.floor(Math.random() * 4)
 
-    // Randomizes tiles per row
-    function randomize(row){
-        if(row == 1){
-            r11.active = ranbool();
-            r12.active = ranbool();
-            r13.active = ranbool();
-            r14.active = ranbool();
-            update(r11);
-            update(r12);
-            update(r13);
-            update(r14);
-        }
-        if(row == 2){
-            r21.active = ranbool();
-            r22.active = ranbool();
-            r23.active = ranbool();
-            r24.active = ranbool();
-            update(r21);
-            update(r22);
-            update(r23);
-            update(r24);
-        }
-        if(row == 3){
-            r31.active = ranbool();
-            r32.active = ranbool();
-            r33.active = ranbool();
-            r34.active = ranbool();
-            update(r31);
-            update(r32);
-            update(r33);
-            update(r34);
-        }
-        if(row == 4){
-            r41.active = ranbool();
-            r42.active = ranbool();
-            r43.active = ranbool();
-            r44.active = ranbool();
-            update(r41);
-            update(r42);
-            update(r43);
-            update(r44);
-        }
-        if(row == 5){
-            r51.active = ranbool();
-            r52.active = ranbool();
-            r53.active = ranbool();
-            r54.active = ranbool();
-            update(r51);
-            update(r52);
-            update(r53);
-            update(r54);
-        }
+        tile1.active = false;
+        tile2.active = false;
+        tile3.active = false;
+        tile4.active = false;
 
+        if(ran == 0){
+            tile1.active = true;
+        }
+        else if(ran == 1){
+            tile2.active = true;
+        }
+        else if(ran == 2){
+            tile3.active = true;
+        }
+        else if(ran == 3){
+            tile4.active = true;
+        }
+        update(tile1);
+        update(tile2);
+        update(tile3);
+        update(tile4);
     }
 
+
+
     // Checks for active (= missed) rects
-    function check(row){
-        if(row == 1){
-            if(r11.active || r12.active || r13.active || r14.active){
+    function check(tile1, tile2, tile3, tile4){
+            if(tile1.active || tile2.active || tile3.active || tile4.active){
                 die();
-            }
-        }
-        if(row == 2){
-            if(r21.active || r22.active || r23.active || r24.active){
-                die();
-            }
-        }
-        if(row == 3){
-            if(r31.active || r32.active || r33.active || r34.active){
-                die();
-            }
-        }
-        if(row == 4){
-            if(r41.active || r42.active || r43.active || r44.active){
-                die();
-            }
-        }
-        if(row == 5){
-            if(r51.active || r52.active || r53.active || r54.active){
-                die();
-            }
-        }
+            }       
+    }
+
+    function move(tile1, tile2, tile3, tile4){
+        tile1.y = tile1.y - score.speed;
+        tile2.y = tile1.y;
+        tile3.y = tile1.y;
+        tile4.y = tile1.y;
 
     }
 
@@ -263,76 +299,55 @@ Page {
         }
         else {
             // Move all rectangles
-            r11.y = r11.y - score.speed;
-            r12.y = r11.y;
-            r13.y = r11.y;
-            r14.y = r11.y;
-
-            r21.y = r21.y - score.speed;
-            r22.y = r21.y;
-            r23.y = r21.y;
-            r24.y = r21.y;
-
-            r31.y = r31.y - score.speed;
-            r32.y = r31.y;
-            r33.y = r31.y;
-            r34.y = r31.y;
-
-            r41.y = r41.y - score.speed;
-            r42.y = r41.y;
-            r43.y = r41.y;
-            r44.y = r41.y;
-
-            r51.y = r51.y - score.speed;
-            r52.y = r51.y;
-            r53.y = r51.y;
-            r54.y = r51.y;
+            move(r11, r12, r13, r14);
+            move(r21, r22, r23, r24);
+            move(r31, r32, r33, r34);
+            move(r41, r42, r43, r44);
+            move(r51, r52, r53, r54);
 
                 if(r11.y < -r11.height){
                     r11.y = rect.height + (r11.y + r11.height);
                     r12.y = r11.y;
                     r13.y = r11.y;
                     r14.y = r11.y;
-                    score.speed = score.speed + 0.1
-                    check(1);
-                    randomize(1);
+                    check(r11, r12, r13, r14);
+                    newrandomize(r11, r12, r13, r14);
                 }
                 if(r21.y < -r21.height){
                     r21.y = rect.height + (r21.y + r21.height);
                     r22.y = r21.y;
                     r23.y = r21.y;
                     r24.y = r21.y;
-                    score.speed = score.speed + 0.1
-                    check(2);
-                    randomize(2);
+                    check(r21, r22, r23, r24);
+                    newrandomize(r21, r22, r23, r24);
                 }
                 if(r31.y < -r31.height){
                     r31.y = rect.height + (r31.y + r31.height);
                     r32.y = r31.y;
                     r33.y = r31.y;
                     r34.y = r31.y;
-                    score.speed = score.speed + 0.1
-                    check(3);
-                    randomize(3);
+                    check(r31, r32, r33, r34);
+                    newrandomize(r31, r32, r33, r34);
                 }
                 if(r41.y < -r41.height){
                     r41.y = rect.height + (r41.y + r41.height);
                     r42.y = r41.y;
                     r43.y = r41.y;
                     r44.y = r41.y;
-                    score.speed = score.speed + 0.1
-                    check(4);
-                    randomize(4);
+                    check(r41, r42, r43, r44);
+                    newrandomize(r41, r42, r43, r44);
                 }
                 if(r51.y < -r51.height){
                     r51.y = rect.height + (r51.y + r51.height);
                     r52.y = r51.y;
                     r53.y = r51.y;
                     r54.y = r51.y;
-                    score.speed = score.speed + 0.2
-                    check(5);
-                    randomize(5);
+                    check(r51, r52, r53, r54);
+                    newrandomize(r51, r52, r53, r54);
                 }
+
+           // Increase game speed
+           score.speed = score.speed + 0.015;
 
 
         }
@@ -679,9 +694,22 @@ Page {
     }
 
     Image {
-        id: info
+        id: stop
         y: 7
         x: rect.width - 50
+        visible: true
+        source: "../img/pause.png"
+        MouseArea {
+            anchors.fill: parent
+            onClicked: pause()
+        }
+    }
+
+
+    Image {
+        id: info
+        y: 7
+        x: rect.width - 150
         visible: true
         source: "../img/info.png"
         MouseArea {
@@ -691,16 +719,18 @@ Page {
     }
 
     Image {
-        id: stop
+        id: mute
         y: 7
-        x: rect.width - 125
+        x: rect.width - 100
         visible: true
-        source: "../img/pause.png"
+        source: "../img/mute.png"
         MouseArea {
             anchors.fill: parent
-            onClicked: pause()
+            onClicked: togglesound()
         }
     }
+
+
 
     Label {
         x: 10
@@ -712,7 +742,9 @@ Page {
         font.family: pixels.name
         property int value: 0
         property int high: geths()
-        property real speed: 4
+        property real speed: 5
+        property int index: 0
+        property bool mute: getsound()
     }
 
     Label {
