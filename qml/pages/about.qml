@@ -41,6 +41,8 @@ Page {
         contentHeight: parent.height + 900
         id: flick
 
+        VerticalScrollDecorator{}
+
         Column {
             id: col
             anchors.fill: parent
