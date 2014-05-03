@@ -8,11 +8,12 @@ Page {
     Component.onCompleted: {
         // Initialize the database
         DB.initialize();
-        update(ranking);
+        update(ranking, 4);
+        update(ambience, 6);
     }
 
-    function update(object) {
-        var state = DB.getval(4);
+    function update(object, dbid) {
+        var state = DB.getval(dbid);
 
         if(state != 0){
             object.checked = true;
@@ -22,23 +23,23 @@ Page {
         }
     }
 
-    function toggle(oid){
-        var state = DB.getval(4);
+    function toggle(oid, dbid){
+        var state = DB.getval(dbid);
 
         if(state != 0){
-            DB.setval(0, 4);
-            update(oid);
+            DB.setval(0, dbid);
+            update(oid, dbid);
         }
         else{
-            DB.setval(1, 4);
-            update(oid);
+            DB.setval(1, dbid);
+            update(oid, dbid);
         }
     }
 
     SilicaFlickable {
         anchors.fill: parent
         height: parent.height
-        contentHeight: parent.height + 900
+        contentHeight: parent.height + 1020
         id: flick
 
         VerticalScrollDecorator{}
@@ -62,9 +63,20 @@ Page {
                 automaticCheck: false
                 text: "Upload highscore for ranking"
                 onClicked: {
-                    toggle(ranking)
+                    toggle(ranking, 4)
                 }
             }
+
+            TextSwitch {
+                id: ambience
+                automaticCheck: false
+                text: "Ambience Mode"
+                description: 'Requires app restart'
+                onClicked: {
+                    toggle(ambience, 6)
+                }
+            }
+
 
             RemorseItem {
                 id: remorse

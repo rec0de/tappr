@@ -9,7 +9,7 @@ Page {
 
     Component.onCompleted: {
         // Initialize the database
-        DB.initialize();
+        DB.initialize();        
     }
 
     FontLoader { id: pixels; source: "../img/pixelmix.ttf" }
@@ -36,6 +36,13 @@ Page {
         start.text = 'tap to resume'
     }
 
+    function options(){
+        pause();
+        menu2.visible = true;
+        logo.visible = false;
+        score.visible = false;
+    }
+
     function die() {
         ticker.running = false;        
         blinker.running = true;        
@@ -51,6 +58,7 @@ Page {
 
         score.value = 0;
         score.text = '0';
+        score.index = 0;
         resetter.start();
 
 
@@ -146,6 +154,7 @@ Page {
                         'e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'd', 'c', 'c',
                         'd', 'd', 'e', 'c', 'd', 'f', 'e', 'c', 'd', 'f', 'e', 'd', 'c', 'd', 'g',
                         'e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'd', 'c', 'c'];
+
            var index = score.index;
 
             if(beat[index] == 'c'){
@@ -176,27 +185,53 @@ Page {
         if(soundstate != '0'){
             DB.setval('0', 5)
             score.mute = true;
-            mute.source = '../img/mute.png';
+            mute.text = 'Unmute';
         }
         else{
             DB.setval('1', 5);
             score.mute = false;
-            mute.source = '../img/unmute.png'
+            mute.text = 'Mute'
         }
     }
 
     function getsound(){
         if(DB.getval(5) != '0'){
-            mute.source = '../img/unmute.png'
+            mute.text = 'Mute'
             return false;
         }
         else{
-            mute.source = '../img/mute.png'
+            mute.text = 'Unmute'
             return true;
         }
     }
 
     // END Sound stuff
+
+
+    // Check for activated ambience mode
+    function getambience(){
+        var state = DB.getval(6);
+        if(state != '1' && state != '0'){
+            DB.setval('0', 6);
+            return false;
+        }
+        else if (state == '1'){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    // Return correct background color (for ambience mode)
+    function getcolor(){
+        if(score.ambience){
+            return 'transparent';
+        }
+        else{
+            return '#00bfff';
+        }
+    }
 
     function touch(id) {
 
@@ -204,6 +239,9 @@ Page {
             ticker.running = true;
             blinker.running = false;
             start.visible = false;
+            menu2.visible = false;
+            logo.visible = true;
+            score.visible = true;
         }
         else if(resetter.running == false){
 
@@ -214,14 +252,15 @@ Page {
                 playnext();
             }
             else{
-                id.active = true;
-                id.color = '#ffffff';
+                id.active = true;               
                 die();
             }
         }
 
         // Change game color
-       var ran = Math.floor(Math.random() * 4)
+        if(!score.ambience){
+
+        var ran = Math.floor(Math.random() * 4)
 
         if(ran == 0){
             rect.color = '#00bfff';
@@ -235,12 +274,19 @@ Page {
         else if(ran == 3){
             rect.color = '#ff6000';
         }
+        }
 
     }
 
     function update(tile){
         if(tile.active){
-          tile.color = '#ffffff';
+            //Change tile color in ambience mode
+            if(score.ambience){
+                tile.color = Theme.highlightColor;
+            }
+            else{
+                tile.color = '#ffffff';
+            }
         }
         else{
           tile.color = 'transparent';
@@ -383,7 +429,7 @@ Page {
         id: rect
         width: parent.width
         height: parent.height
-        color: '#00bfff'
+        color: getcolor()
     }
 
     // All Rectangles
@@ -691,42 +737,52 @@ Page {
         width: rect.width + 10
         border.color: '#ffffff'
         border.width: 5
-    }
-
-    Image {
-        id: stop
-        y: 7
-        x: rect.width - 50
-        visible: true
-        source: "../img/pause.png"
         MouseArea {
             anchors.fill: parent
-            onClicked: pause()
+            onClicked: options()
         }
-    }
+
+        Rectangle{
+            id: menu2
+            visible: false
+            color: 'transparent'
+            anchors.fill: parent;
 
 
-    Image {
-        id: info
-        y: 7
-        x: rect.width - 150
-        visible: true
-        source: "../img/info.png"
-        MouseArea {
-            anchors.fill: parent
-            onClicked: about()
-        }
-    }
 
-    Image {
-        id: mute
-        y: 7
-        x: rect.width - 100
-        visible: true
-        source: "../img/mute.png"
-        MouseArea {
-            anchors.fill: parent
-            onClicked: togglesound()
+            Label {
+                id: info
+                text: 'Info'
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 42
+                font.family: pixels.name
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                width: parent.width/2
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: about()
+                }
+            }
+
+
+            Label {
+                id: mute
+                text: 'Mute'
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 42
+                font.family: pixels.name
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                width: parent.width/2
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: togglesound()
+                }
+            }
+
+
+
         }
     }
 
@@ -745,12 +801,13 @@ Page {
         property real speed: 5
         property int index: 0
         property bool mute: getsound()
+        property bool ambience: getambience()
     }
 
     Label {
         y: 5
         id: logo
-        text: 'Tappr'
+        text: 'Menu'
         font.pixelSize: 42
         font.family: pixels.name
         anchors.horizontalCenter: menu.horizontalCenter

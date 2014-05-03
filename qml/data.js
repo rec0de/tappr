@@ -10,6 +10,7 @@
 // score 3: unique ID for server communication
 // score 4: enable/disable ranking
 // score 5: enable/disable sound
+// score 6: ambience mode enable/disable
 
 // First, let's create a short helper function to get the database connection
 function getDatabase() {
