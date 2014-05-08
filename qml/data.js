@@ -11,6 +11,9 @@
 // score 4: enable/disable ranking
 // score 5: enable/disable sound
 // score 6: ambience mode enable/disable
+// score 7: fancy sound enable/disable
+// score 8: version (0.0.1.x -> 1)
+// score 9: song selection
 
 // First, let's create a short helper function to get the database connection
 function getDatabase() {

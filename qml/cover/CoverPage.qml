@@ -89,13 +89,14 @@ CoverBackground {
             var key = Key.get();
             var uid = DB.getval(3);
             var score = coverscore.text;
-            var hash = CR.sha256(key + score);
 
             if(uid == '0' || isNumber(uid) == false|| uid == '-1'){
                 load('https://cdown.pf-control.de/tappr/getid.php');
                 DB.setval(rank.value, 3);
                 uid = rank.value;
             }
+
+            var hash = CR.sha256(key + score + uid);
 
             load('https://cdown.pf-control.de/tappr/rank.php?id='+uid+'&sc='+score+'&h='+hash);
             var rankval = rank.value;

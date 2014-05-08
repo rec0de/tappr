@@ -9,7 +9,16 @@ Page {
 
     Component.onCompleted: {
         // Initialize the database
-        DB.initialize();        
+        DB.initialize();
+        // Load settings from DB
+        updatesettings();
+
+        // This code is only temporary. It switches ambience mode on after update
+        if(DB.getval(8) != '4'){
+            DB.setval('4', 8);
+            DB.setval('1', 6); // Enable ambience
+        }
+
     }
 
     FontLoader { id: pixels; source: "../img/pixelmix.ttf" }
@@ -120,6 +129,34 @@ Page {
         return highscore;
     }
 
+    // Get up-to-date settings from DB
+    function updatesettings(){
+        var ambience = DB.getval(6);
+        var fsound = DB.getval(7);
+        var song = DB.getval(9);
+
+        if(ambience != '0'){
+            score.ambience = true;
+        }
+        else{
+            score.ambience = false;
+        }
+
+        if(fsound != '0'){
+            score.fancysound = true;
+        }
+        else{
+            score.fancysound = false;
+        }
+
+        if(song == '1'){
+            score.song = 1;
+        }
+        else{
+            score.song = 0;
+        }
+    }
+
 
     // Sound stuff starts here
     SoundEffect{
@@ -143,41 +180,63 @@ Page {
         id: g
         source: '../aud/g.wav'
     }
+    SoundEffect{
+        id: a
+        source: '../aud/a.wav'
+    }
 
 
     function playnext(){
         if(!score.mute){
+            if(score.fancysound){
+                var beat = [];
 
-            // Ode to joy by Ludwig van Beethoven (Slightly modified)
+                if(score.song == 0){
+                    // Ode to joy by Ludwig van Beethoven (Slightly modified)
+                    beat =  ['e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'e', 'd', 'd',
+                             'e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'd', 'c', 'c',
+                             'd', 'd', 'e', 'c', 'd', 'f', 'e', 'c', 'd', 'f', 'e', 'd', 'c', 'd', 'g',
+                             'e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'd', 'c', 'c'];
+                }
+                else{
 
-            var beat = ['e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'e', 'd', 'd',
-                        'e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'd', 'c', 'c',
-                        'd', 'd', 'e', 'c', 'd', 'f', 'e', 'c', 'd', 'f', 'e', 'd', 'c', 'd', 'g',
-                        'e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'd', 'c', 'c'];
+                    // My own 'composition' :)
+                    beat = ['f', 'g', 'a', 'g', 'a', 'g', 'd', 'e', 'f', 'e', 'f', 'e', 'd', 'e', 'f',
+                            'e', 'd', 'e', 'd', 'c', 'g', 'f', 'e', 'g', 'a', 'g', 'a', 'd', 'e', 'f',
+                            'd', 'c'];
+                }
 
-           var index = score.index;
+                var index = score.index;
 
-            if(beat[index] == 'c'){
-               c.play();
-           }
-            else if(beat[index] == 'd'){
-               d.play();
-           }
-            else if(beat[index] == 'e'){
-               e.play();
-           }
-            else if(beat[index] == 'f'){
-               f.play();
-           }
-            else if(beat[index] == 'g'){
-               g.play();
-           }
+                if(beat[index] == 'c'){
+                    c.play();
+                }
+                else if(beat[index] == 'd'){
+                    d.play();
+                }
+                else if(beat[index] == 'e'){
+                    e.play();
+                }
+                else if(beat[index] == 'f'){
+                    f.play();
+                }
+                else if(beat[index] == 'g'){
+                    g.play();
+                }
+                else if(beat[index] == 'a'){
+                    a.play();
+                }
 
-           score.index = score.index + 1;
-           if(score.index == beat.length){
-               score.index = 0;
+                score.index = score.index + 1;
+                if(score.index == beat.length){
+                    score.index = 0;
+                }
            }
-        }
+           else{
+                g.play();
+            }
+
+         }
 
        }
     function togglesound(){
@@ -211,11 +270,7 @@ Page {
     // Check for activated ambience mode
     function getambience(){
         var state = DB.getval(6);
-        if(state != '1' && state != '0'){
-            DB.setval('0', 6);
-            return false;
-        }
-        else if (state == '1'){
+        if(state != '0'){
             return true;
         }
         else{
@@ -423,6 +478,15 @@ Page {
         running: false
         repeat: false
         onTriggered: reset()
+    }
+
+    // Update ambience and sound setting every 3s to save resources
+    Timer {
+        id: updatesett
+        interval: 3000
+        running: true
+        repeat: true
+        onTriggered: updatesettings()
     }
 
     Rectangle {
@@ -801,7 +865,9 @@ Page {
         property real speed: 5
         property int index: 0
         property bool mute: getsound()
-        property bool ambience: getambience()
+        property bool ambience: true
+        property bool fancysound: true
+        property int song: 0
     }
 
     Label {
