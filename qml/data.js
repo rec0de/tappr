@@ -14,6 +14,10 @@
 // score 7: fancy sound enable/disable
 // score 8: version (0.0.1.x -> 1)
 // score 9: song selection
+// score 10: reverse enable/disable
+
+// strings 1: nickname
+// strings 2: crypto secret (for nickname authorization)
 
 // First, let's create a short helper function to get the database connection
 function getDatabase() {
@@ -27,6 +31,7 @@ function initialize() {
     db.transaction(
                 function(tx) {
                     tx.executeSql('CREATE TABLE IF NOT EXISTS score(uid INTEGER UNIQUE, points INTEGER)');
+                    tx.executeSql('CREATE TABLE IF NOT EXISTS strings(uid INTEGER UNIQUE, data TEXT)');
                 });
 }
 
@@ -68,11 +73,13 @@ function getscore() {
 }
 
 // This function is used to update settings/values
-function setval(value, uid) {
+function setval(value, uid, table) {
+    if (typeof table == 'undefined' ) table = 'score';
+
     var db = getDatabase();
     var res = "";
     db.transaction(function(tx) {
-        var rs = tx.executeSql('INSERT OR REPLACE INTO score VALUES (?,?);', [uid,value]);
+        var rs = tx.executeSql('INSERT OR REPLACE INTO '+ table +' VALUES (?,?);', [uid,value]);
         if (rs.rowsAffected > 0) {
             res = "OK";
             console.log ("Saved to database");
@@ -95,8 +102,24 @@ function getval(uid) {
         if (rs.rows.length > 0) {
             notesText = rs.rows.item(0).points
         } else {
-            notesText = -1
+            notesText = '-1'
         }
     })
     return notesText
 }
+
+// This function is used to retrieve strings from the database
+function getstring(uid) {
+    var db = getDatabase();
+    var notesText="";
+    db.transaction(function(tx) {
+        var rs = tx.executeSql('SELECT data FROM strings WHERE uid=?;', [uid]);
+        if (rs.rows.length > 0) {
+            notesText = rs.rows.item(0).data
+        } else {
+            notesText = '-1'
+        }
+    })
+    return notesText
+}
+

@@ -40,6 +40,7 @@ CoverBackground {
     }
 
     function forcerefresh(){
+        refresh();
         rank.text = getrank();
     }
 
@@ -110,7 +111,7 @@ CoverBackground {
 
     Timer {
         id: updater
-        interval: 2000
+        interval: 5000
         running: true
         repeat: true
         onTriggered: refresh()

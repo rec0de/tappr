@@ -10,15 +10,22 @@ Page {
     Component.onCompleted: {
         // Initialize the database
         DB.initialize();
-        // Load settings from DB
-        updatesettings();
 
-        // This code is only temporary. It switches ambience mode on after update
-        if(DB.getval(8) != '4'){
-            DB.setval('4', 8);
-            DB.setval('1', 6); // Enable ambience
+        if(DB.getval(8) < '5'){
+            DB.setval('5', 8);
+            DB.setval('0', 10); // Disable reverse
+            DB.setval('1', 6); // Activate ambience once
+        }
+        // Personal message to user #408
+        if(DB.getval(3) == '408'){
+            message.visible = true;
+        }
+        else{
+            message.visible = false;
         }
 
+        // Load settings from DB
+        updatesettings();
     }
 
     FontLoader { id: pixels; source: "../img/pixelmix.ttf" }
@@ -41,7 +48,9 @@ Page {
 
     function pause() {
         ticker.running = false;
-        blinker.running = true;
+        blinker.running = false;
+        updatesett.running = false;
+        start.visible = true;
         start.text = 'tap to resume'
     }
 
@@ -134,9 +143,11 @@ Page {
         var ambience = DB.getval(6);
         var fsound = DB.getval(7);
         var song = DB.getval(9);
+        var reverse = DB.getval(10);
 
         if(ambience != '0'){
             score.ambience = true;
+            rect.color = 'transparent';
         }
         else{
             score.ambience = false;
@@ -152,8 +163,23 @@ Page {
         if(song == '1'){
             score.song = 1;
         }
+        else if(song == '2'){
+            score.song = 2;
+        }
         else{
             score.song = 0;
+        }
+
+        if(reverse != '0'){
+            score.reverse = true;
+        }
+        else{
+            score.reverse = false;
+        }
+        if(reverse != score.oldreverse){
+            die();
+            start.text = 'tap to restart';
+            score.oldreverse = reverse;
         }
     }
 
@@ -198,12 +224,19 @@ Page {
                              'd', 'd', 'e', 'c', 'd', 'f', 'e', 'c', 'd', 'f', 'e', 'd', 'c', 'd', 'g',
                              'e', 'e', 'f', 'g', 'g', 'f', 'e', 'd', 'c', 'c', 'd', 'e', 'd', 'c', 'c'];
                 }
-                else{
+                else if(score.song == 1){
 
                     // My own 'composition' :)
                     beat = ['f', 'g', 'a', 'g', 'a', 'g', 'd', 'e', 'f', 'e', 'f', 'e', 'd', 'e', 'f',
                             'e', 'd', 'e', 'd', 'c', 'g', 'f', 'e', 'g', 'a', 'g', 'a', 'd', 'e', 'f',
                             'd', 'c'];
+                }
+                else{
+                    // 'Spring' from 'the four seasons' by Vivaldi (heavily simplified)
+                    beat = ['e', 'e', 'e', 'g', 'g', 'f', 'e', 'e', 'e', 'g', 'g', 'f', 'e', 'f', 'g',
+                            'f', 'e', 'd', 'e', 'e', 'e', 'g', 'g', 'f', 'e', 'e', 'e', 'g', 'g', 'f',
+                            'e', 'f', 'g', 'f', 'e', 'd', 'g', 'f', 'e', 'f', 'g', 'a', 'b', 'a', 'g',
+                            'f', 'e', 'f', 'g', 'a', 'g', 'f', 'e', 'd', 'd'];
                 }
 
                 var index = score.index;
@@ -292,11 +325,13 @@ Page {
 
         if(ticker.running == false && resetter.running == false){
             ticker.running = true;
+            updatesett.running = true;
             blinker.running = false;
             start.visible = false;
             menu2.visible = false;
             logo.visible = true;
             score.visible = true;
+            updatesettings();
         }
         else if(resetter.running == false){
 
@@ -381,11 +416,17 @@ Page {
     function check(tile1, tile2, tile3, tile4){
             if(tile1.active || tile2.active || tile3.active || tile4.active){
                 die();
-            }       
+            }
     }
 
     function move(tile1, tile2, tile3, tile4){
-        tile1.y = tile1.y - score.speed;
+        if(score.reverse){
+            tile1.y = tile1.y + score.speed;
+        }
+        else{
+            tile1.y = tile1.y - score.speed;
+        }
+
         tile2.y = tile1.y;
         tile3.y = tile1.y;
         tile4.y = tile1.y;
@@ -406,6 +447,8 @@ Page {
             move(r41, r42, r43, r44);
             move(r51, r52, r53, r54);
 
+            if(!score.reverse){
+                // normal flow
                 if(r11.y < -r11.height){
                     r11.y = rect.height + (r11.y + r11.height);
                     r12.y = r11.y;
@@ -446,6 +489,51 @@ Page {
                     check(r51, r52, r53, r54);
                     newrandomize(r51, r52, r53, r54);
                 }
+            }
+            else{
+                // reversed flow
+                if(r11.y > rect.height){
+                    r11.y = -(r11.height - (r11.y - rect.height));
+                    r12.y = r11.y;
+                    r13.y = r11.y;
+                    r14.y = r11.y;
+                    check(r11, r12, r13, r14);
+                    newrandomize(r11, r12, r13, r14);
+                }
+                if(r21.y > rect.height){
+                    r21.y = -(r21.height - (r21.y - rect.height));
+                    r22.y = r21.y;
+                    r23.y = r21.y;
+                    r24.y = r21.y;
+                    check(r21, r22, r23, r24);
+                    newrandomize(r21, r22, r23, r24);
+                }
+                if(r31.y > rect.height){
+                    r31.y = -(r31.height - (r31.y - rect.height));
+                    r32.y = r31.y;
+                    r33.y = r31.y;
+                    r34.y = r31.y;
+                    check(r31, r32, r33, r34);
+                    newrandomize(r31, r32, r33, r34);
+                }
+                if(r41.y > rect.height){
+                    r41.y = -(r41.height - (r41.y - rect.height));
+                    r42.y = r41.y;
+                    r43.y = r41.y;
+                    r44.y = r41.y;
+                    check(r41, r42, r43, r44);
+                    newrandomize(r41, r42, r43, r44);
+                }
+                if(r51.y > rect.height){
+                    r51.y = -(r51.height - (r51.y - rect.height));
+                    r52.y = r51.y;
+                    r53.y = r51.y;
+                    r54.y = r51.y;
+                    check(r51, r52, r53, r54);
+                    newrandomize(r51, r52, r53, r54);
+                }
+
+            }
 
            // Increase game speed
            score.speed = score.speed + 0.015;
@@ -792,6 +880,21 @@ Page {
         anchors.centerIn: parent
     }
 
+
+    Label {
+        id: message
+        text:   'Hello user #408. <br> It looks like you have been cheating or using a bug to get your highscore of 10104. Please write me a mail to mail@rec0de.net explaining what you did. If you do not write an email to me in the next week, your score will be deleted. Thanks.'
+        font.pixelSize: Theme.fontSizeSmall
+        wrapMode: Text.WordWrap
+        y: 200
+        anchors {
+            left: parent.left
+            right: parent.right
+            leftMargin: Theme.paddingMedium
+            rightMargin: Theme.paddingMedium
+        }
+    }
+
     Rectangle{
         id: menu
         y: -5
@@ -867,6 +970,8 @@ Page {
         property bool mute: getsound()
         property bool ambience: true
         property bool fancysound: true
+        property bool reverse: false
+        property bool oldreverse: false
         property int song: 0
     }
 

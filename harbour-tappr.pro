@@ -21,5 +21,6 @@ OTHER_FILES += qml/harbour-tappr.qml \
     qml/pages/about.qml \
     qml/data.js \
     qml/hash.js \
-    qml/key.js
+    qml/key.js \
+    qml/pages/about2.qml
 
