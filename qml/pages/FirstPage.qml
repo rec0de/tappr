@@ -13,19 +13,20 @@ Page {
 
         if(DB.getval(8) < '5'){
             DB.setval('5', 8);
-            DB.setval('0', 10); // Disable reverse
             DB.setval('1', 6); // Activate ambience once
         }
-        // Personal message to user #408
-        if(DB.getval(3) == '408'){
-            message.visible = true;
+        if(DB.getval(8) < '6'){
+            DB.setval('6', 8);
+            DB.setval('1', 10); // Enable reverse mode
         }
-        else{
-            message.visible = false;
+
+        if(DB.getval(10) == '1'){
+            score.oldreverse = true;
         }
 
         // Load settings from DB
         updatesettings();
+
     }
 
     FontLoader { id: pixels; source: "../img/pixelmix.ttf" }
@@ -878,21 +879,6 @@ Page {
         font.pixelSize: 24
         font.family: pixels.name
         anchors.centerIn: parent
-    }
-
-
-    Label {
-        id: message
-        text:   'Hello user #408. <br> It looks like you have been cheating or using a bug to get your highscore of 10104. Please write me a mail to mail@rec0de.net explaining what you did. If you do not write an email to me in the next week, your score will be deleted. Thanks.'
-        font.pixelSize: Theme.fontSizeSmall
-        wrapMode: Text.WordWrap
-        y: 200
-        anchors {
-            left: parent.left
-            right: parent.right
-            leftMargin: Theme.paddingMedium
-            rightMargin: Theme.paddingMedium
-        }
     }
 
     Rectangle{

@@ -88,9 +88,9 @@ Page {
         }
     }
 
-    // Commented out because not ready for release
 
-   /* function getnick(){
+
+    function getnick(){
         var nick = DB.getstring(1);
         if(nick.length < 3){
             nick = 'User #'+DB.getval(3);
@@ -100,6 +100,7 @@ Page {
     }
 
     function changeuser(){
+        nicktext.focus = false;
         errormsg.visible = false;
         var oldnick = DB.getstring(1);
         if(oldnick != nicktext.text){
@@ -107,36 +108,90 @@ Page {
             DB.setval(newnick, 1, 'strings');
 
 
-            // Upload nickname
-
             // Get secret if not in DB
             if(DB.getstring(2) == '-1'){
+                debug.response = '';
                 load('https://cdown.pf-control.de/tappr/getsecret.php?id=' + DB.getval(3) + '&h=' + CR.sha256(Key.get() + DB.getval(3)));
-                var secret = debug.text;
-                if(secret.length == 20){
-                    secret = secret.replace(/[^a-z0-9]/gi,'');
-                    DB.setval(secret, 2, 'strings');
-                }
-                else{
-                    errormsg.visible = true;
-                    if(secret == '-4'){
-                        errormsg.text = 'Error: Data upload disabled';
-                    }
-                    else{
-                        errormsg.text = 'Error: '+secret;
-                    }
-                    return;
-                }
+                secrettimer.running = true;
             }
-            // Create signed message
-            var nicksecret = DB.getstring(2);
-            var nickkey = Key.get();
-            var nickid = DB.getval(3);
-            var nickmsg = '?h='+CR.sha256(newnick + nickkey + nickid)+'&n='+newnick+'&s='+nicksecret+'&i='+nickid;
+            else{
+                nick_send(newnick);
+            }
 
         }
     }
-*/
+
+
+    function checksecret(){
+        // checks if secret is received and calls nick_send if done
+        var secret = debug.response;
+
+        if(secret != ''){
+            secrettimer.running = false;
+            if(secret.length > 15 && secret.length < 25){
+                secret = secret.replace(/[^a-z0-9]/gi,'');
+                DB.setval(secret, 2, 'strings');
+                debug.response = '';
+                nick_send(DB.getstring(1));
+            }
+            else{
+                errormsg.visible = true;
+                if(secret == '-4'){
+                    errormsg.text = 'Error: Data upload disabled';
+                }
+                else if(secret == '-3'){
+                    errormsg.text = 'Error: Connection timeout';
+                }
+                else if(secret == '-2'){
+                    errormsg.text = 'Error: This shouldn\'t happen.';
+                }
+                else if(secret == '-1'){
+                    errormsg.text = 'Error: Authentification failed. Modded client?';
+                }
+                else{
+                    errormsg.text = 'Error: '+secret;
+                }
+            }
+        }
+    }
+
+
+    function nick_send(newnick){
+        // Create signed message
+        var nicksecret = DB.getstring(2);
+        var nickkey = Key.get();
+        var nickid = DB.getval(3);
+        var nickmsg = '?h='+CR.sha256(newnick + nickkey + nickid)+'&n='+newnick+'&s='+nicksecret+'&i='+nickid;
+
+        load('https://cdown.pf-control.de/tappr/setnick.php'+nickmsg);
+        loadtimer.running = true;
+    }
+
+    function checkresponse(){
+        var response = debug.response;
+
+        errormsg.visible = true;
+
+        if(response == 'OK'){
+            errormsg.text = 'Changed successfully';
+        }
+        else if(response == '-4'){
+            errormsg.text = 'Error: Data upload disabled';
+        }
+        else if(response == '-3'){
+            errormsg.text = 'Error: Connection timeout';
+        }
+        else if(response == '-6'){
+            errormsg.text = 'Error: Invalid secret';
+        }
+        else if(response == '-1'){
+            errormsg.text = 'Error: Authentification failed. Modded client?';
+        }
+        else{
+            errormsg.text = 'Error: '+ response;
+        }
+    }
+
 
     function stats(url) {
         if(DB.getval(4) != '0'){
@@ -158,8 +213,8 @@ Page {
                         var dataarray = text.split('|')
 
                         number.text = '# of Players: ' + dataarray[0];
-                        avg.text = 'Avg. score: ' + dataarray[1];
-                        max.text = 'Max. score: ' + dataarray[2];
+                        avg.text = 'Average: ' + dataarray[1];
+                        max.text = 'Best: ' + dataarray[2];
                         number.visible = true;
                         max.visible = true;
                         avg.visible = true;
@@ -187,6 +242,7 @@ Page {
 
             function load(url) {
                 if(DB.getval(4) != '0'){
+                    busy.visible = true;
 
                     var xhr = new XMLHttpRequest();
                     xhr.timeout = 1000;
@@ -202,17 +258,17 @@ Page {
                                 var patt1 = /(<|>|\{|\}|\[|\]|\\)/g;
                                 text = text.replace(patt1, '');
 
-                                debug.text = text;
+                                debug.response = text;
+                                busy.visible = false;
                             }
-                            else {
-                                debug.text = '-5';
-                            }
+
                         }
                 }
 
 
         xhr.ontimeout = function() {
-            debug.text = '-3';
+            debug.response = '-3';
+            busy.visible = false;
         }
 
         xhr.open('GET', url, true);
@@ -220,9 +276,11 @@ Page {
         xhr.send();
       }
       else {                   
-             debug.text = '-4';
+             debug.response = '-4';
+             busy.visible = false;
       }
     }
+
 
 
     SilicaFlickable {
@@ -255,13 +313,13 @@ Page {
 
             Label {
                 id: avg
-                text: "Avg. score: ..."
+                text: "Average: ..."
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
             Label {
                 id: max
-                text: "Max. score: ..."
+                text: "Best: ..."
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -270,9 +328,21 @@ Page {
                text: "Refresh stats"
                onClicked: stats('https://cdown.pf-control.de/tappr/stats.php?m=plain');
             }
-            /*
+
+            Button {
+               anchors.horizontalCenter: parent.horizontalCenter
+               text: "View Top 100 List"
+               onClicked: Qt.openUrlExternally("http://rec0de.net/tappr/");
+            }
+
             SectionHeader {
                 text: "Nickname"
+            }
+
+            ProgressBar {
+                id: busy
+                indeterminate: true
+                visible: false
             }
 
             TextField {
@@ -283,8 +353,7 @@ Page {
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: changeuser()
                 validator: RegExpValidator { regExp: /[a-z0-9]*$/gi }
-                property string response: ''
-            }
+            }          
 
             Label {
                 id: errormsg
@@ -295,10 +364,27 @@ Page {
 
             Label {
                 id: debug
-                visible: true
-                text: "..."
+                visible: false
+                text: ""
                 anchors.horizontalCenter: parent.horizontalCenter
-            } */
+                property string response: ''
+            }
+
+            Timer{
+                id: loadtimer
+                interval: 1000
+                running: false
+                repeat: false
+                onTriggered: checkresponse()
+            }
+
+            Timer{
+                id: secrettimer
+                interval: 200
+                running: false
+                repeat: true
+                onTriggered: checksecret()
+            }
 
             SectionHeader {
                 text: "Settings"
