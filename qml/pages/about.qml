@@ -332,7 +332,7 @@ Page {
             Button {
                anchors.horizontalCenter: parent.horizontalCenter
                text: "View Top 100 List"
-               onClicked: Qt.openUrlExternally("http://rec0de.net/tappr/");
+               onClicked: Qt.openUrlExternally("http://rec0de.net/tappr/list.php");
             }
 
             SectionHeader {
