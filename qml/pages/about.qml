@@ -353,13 +353,33 @@ Page {
                 EnterKey.iconSource: "image://theme/icon-m-enter-next"
                 EnterKey.onClicked: changeuser()
                 validator: RegExpValidator { regExp: /[a-z0-9]*$/gi }
-            }          
+                inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhNoAutoUppercase
+            }
+
+            Label {
+                font.pixelSize: Theme.fontSizeExtraSmall
+                text: "Nicknames can only contain alphanumeric (A-z, 0-9) characters."
+                wrapMode: Text.WordWrap
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    leftMargin: Theme.paddingMedium
+                    rightMargin: Theme.paddingMedium
+                }
+            }
 
             Label {
                 id: errormsg
+                font.pixelSize: Theme.fontSizeExtraSmall
                 text: ""
                 visible: false
-                anchors.horizontalCenter: parent.horizontalCenter
+                wrapMode: Text.WordWrap
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    leftMargin: Theme.paddingMedium
+                    rightMargin: Theme.paddingMedium
+                }
             }
 
             Label {

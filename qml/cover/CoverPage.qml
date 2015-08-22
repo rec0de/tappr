@@ -8,6 +8,7 @@ import "../key.js" as Key
 
 
 CoverBackground {
+    property bool tocheck: true
 
     Component.onCompleted: {
         // Initialize the database
