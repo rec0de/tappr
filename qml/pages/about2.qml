@@ -71,7 +71,7 @@ Page {
             }
 
             Label {
-                text: "mail@rec0de.net <br> GnuPG available"
+                text: "mail@rec0de.net"
                 anchors.horizontalCenter: parent.horizontalCenter
                 MouseArea {
                     id : contactMouseArea
@@ -81,22 +81,12 @@ Page {
             }
 
             SectionHeader {
-                text: "Support me?"
-            }
-
-            Button {
-                text: "Tip me (BTC/DOGE)"
-               onClicked: Qt.openUrlExternally("http://rec0de.net/a/tip.php")
-               anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-            SectionHeader {
                 text: "About me"
             }
 
             Label {
                 id: aboutme
-                text:   'I develop these apps as a hobby. Therefore, please don\'t expect them to work perfect. If you like what I\'m doing, consider liking / commenting the app or following me on twitter. For a developer, knowing that people out there use & like your app is one of the greatest feelings ever.'
+                text:   'I develop these apps as a hobby. Therefore, please don\'t expect them to work perfectly. If you like what I\'m doing, consider liking / commenting the app or following me on twitter. For a developer, knowing that people out there use & like your app is one of the greatest feelings ever.'
                 font.pixelSize: Theme.fontSizeSmall
                 wrapMode: Text.WordWrap
                 anchors {

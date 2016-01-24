@@ -93,14 +93,14 @@ CoverBackground {
             var score = coverscore.text;
 
             if(uid == '0' || isNumber(uid) == false|| uid == '-1'){
-                load('https://cdown.pf-control.de/tappr/getid.php');
+                load('https://rec0de.net/tappr/getid.php');
                 DB.setval(rank.value, 3);
                 uid = rank.value;
             }
 
             var hash = CR.sha256(key + score + uid);
 
-            load('https://cdown.pf-control.de/tappr/rank.php?id='+uid+'&sc='+score+'&h='+hash);
+            load('https://rec0de.net/tappr/rank.php?id='+uid+'&sc='+score+'&h='+hash);
             var rankval = rank.value;
             DB.setval(rankval, 2);
             return rankval;

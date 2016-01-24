@@ -25,7 +25,7 @@ Page {
         update(reverse, 10);
         getsong();
         // Load stats (if server stats are enabled [see database id 4])
-        stats('https://cdown.pf-control.de/tappr/stats.php?m=plain');
+        stats('https://rec0de.net/tappr/stats.php?m=plain');
     }
 
     function update(object, dbid) {
@@ -111,7 +111,7 @@ Page {
             // Get secret if not in DB
             if(DB.getstring(2) == '-1'){
                 debug.response = '';
-                load('https://cdown.pf-control.de/tappr/getsecret.php?id=' + DB.getval(3) + '&h=' + CR.sha256(Key.get() + DB.getval(3)));
+                load('https://rec0de.net/tappr/getsecret.php?id=' + DB.getval(3) + '&h=' + CR.sha256(Key.get() + DB.getval(3)));
                 secrettimer.running = true;
             }
             else{
@@ -163,7 +163,7 @@ Page {
         var nickid = DB.getval(3);
         var nickmsg = '?h='+CR.sha256(newnick + nickkey + nickid)+'&n='+newnick+'&s='+nicksecret+'&i='+nickid;
 
-        load('https://cdown.pf-control.de/tappr/setnick.php'+nickmsg);
+        load('https://rec0de.net/tappr/setnick.php'+nickmsg);
         loadtimer.running = true;
     }
 
@@ -326,7 +326,7 @@ Page {
             Button {
                anchors.horizontalCenter: parent.horizontalCenter
                text: "Refresh stats"
-               onClicked: stats('https://cdown.pf-control.de/tappr/stats.php?m=plain');
+               onClicked: stats('https://rec0de.net/tappr/stats.php?m=plain');
             }
 
             Button {
