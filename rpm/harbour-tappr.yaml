@@ -8,7 +8,7 @@ License: GPL v2
 Sources:
 - '%{name}-%{version}.tar.bz2'
 Description: |
-  A small but addicting acrcade game.
+  A small but addicting arcade game.
 Configure: none
 Builder: qtc5
 PkgConfigBR:
@@ -19,11 +19,10 @@ PkgConfigBR:
 Requires:
 - sailfishsilica-qt5 >= 0.10.9
 Files:
-- /usr/share/icons/hicolor/86x86/apps
-- /usr/share/applications
-- /usr/share/harbour-tappr
-- /usr/bin
 - '%{_datadir}/icons/hicolor/86x86/apps/%{name}.png'
+- '%{_datadir}/icons/hicolor/108x108/apps/%{name}.png'
+- '%{_datadir}/icons/hicolor/128x128/apps/%{name}.png'
+- '%{_datadir}/icons/hicolor/256x256/apps/%{name}.png'
 - '%{_datadir}/applications/%{name}.desktop'
 - '%{_datadir}/%{name}/qml'
 - '%{_bindir}'

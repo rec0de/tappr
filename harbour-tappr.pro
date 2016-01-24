@@ -10,6 +10,12 @@ TARGET = harbour-tappr
 
 CONFIG += sailfishapp
 
+appicons.path = /usr/share/icons/hicolor
+
+appicons.files = appicons/*
+
+INSTALLS += appicons
+
 SOURCES += src/harbour-tappr.cpp
 
 OTHER_FILES += qml/harbour-tappr.qml \
@@ -22,5 +28,9 @@ OTHER_FILES += qml/harbour-tappr.qml \
     qml/data.js \
     qml/hash.js \
     qml/key.js \
-    qml/pages/about2.qml
+    qml/pages/about2.qml \
+    appicons/86x86/apps/harbour-tappr.png \
+    appicons/108x108/apps/harbour-tappr.png \
+    appicons/128x128/apps/harbour-tappr.png \
+    appicons/256x256/apps/harbour-tappr.png
 
