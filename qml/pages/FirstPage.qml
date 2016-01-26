@@ -81,6 +81,7 @@ Page {
         resetter.start();
 
 
+        // Yeah, that code is horrible... I apologize for my past self.
         r11.active = false;
         r12.active = false;
         r13.active = false;
@@ -351,20 +352,52 @@ Page {
         // Change game color
         if(!score.ambience){
 
-        var ran = Math.floor(Math.random() * 4)
+            var ran = Math.floor(Math.random() * 3);
 
-        if(ran == 0){
-            rect.color = '#00bfff';
-        }
-        else if(ran == 1){
-            rect.color = '#f000cc';
-        }
-        else if(ran == 2){
-            rect.color = '#44ff00';
-        }
-        else if(ran == 3){
-            rect.color = '#ff6000';
-        }
+            if(rect.color === '#00bfff'){
+                if(ran == 0){
+                    rect.color = '#ff6000';
+                }
+                else if(ran == 1){
+                    rect.color = '#f000cc';
+                }
+                else if(ran == 2){
+                    rect.color = '#44ff00';
+                }
+            }
+            else if(rect.color === '#ff6000'){
+                if(ran == 0){
+                    rect.color = '#00bfff';
+                }
+                else if(ran == 1){
+                    rect.color = '#f000cc';
+                }
+                else if(ran == 2){
+                    rect.color = '#44ff00';
+                }
+            }
+            else if(rect.color === '#f000cc'){
+                if(ran == 0){
+                    rect.color = '#00bfff';
+                }
+                else if(ran == 1){
+                    rect.color = '#ff6000';
+                }
+                else if(ran == 2){
+                    rect.color = '#44ff00';
+                }
+            }
+            else if(rect.color === '#44ff00'){
+                if(ran == 0){
+                    rect.color = '#00bfff';
+                }
+                else if(ran == 1){
+                    rect.color = '#ff6000';
+                }
+                else if(ran == 2){
+                    rect.color = '#f000cc';
+                }
+            }
         }
 
     }
