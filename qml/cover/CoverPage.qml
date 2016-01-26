@@ -113,7 +113,7 @@ CoverBackground {
     Timer {
         id: updater
         interval: 5000
-        running: true
+        running: false
         repeat: true
         onTriggered: refresh()
     }
