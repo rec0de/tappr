@@ -354,7 +354,7 @@ Page {
 
             var ran = Math.floor(Math.random() * 3);
 
-            if(rect.color === '#00bfff'){
+            if(rect.color == '#00bfff'){
                 if(ran == 0){
                     rect.color = '#ff6000';
                 }
@@ -365,7 +365,7 @@ Page {
                     rect.color = '#44ff00';
                 }
             }
-            else if(rect.color === '#ff6000'){
+            else if(rect.color == '#ff6000'){
                 if(ran == 0){
                     rect.color = '#00bfff';
                 }
@@ -376,7 +376,7 @@ Page {
                     rect.color = '#44ff00';
                 }
             }
-            else if(rect.color === '#f000cc'){
+            else if(rect.color == '#f000cc'){
                 if(ran == 0){
                     rect.color = '#00bfff';
                 }
@@ -387,7 +387,7 @@ Page {
                     rect.color = '#44ff00';
                 }
             }
-            else if(rect.color === '#44ff00'){
+            else if(rect.color == '#44ff00'){
                 if(ran == 0){
                     rect.color = '#00bfff';
                 }

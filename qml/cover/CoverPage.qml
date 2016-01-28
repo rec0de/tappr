@@ -41,6 +41,8 @@ CoverBackground {
     }
 
     function forcerefresh(){
+        busy.running = true;
+        busy.visible = true;
         refresh();
         rank.text = getrank();
     }
@@ -67,6 +69,8 @@ CoverBackground {
                     text = text.replace(patt1, '');
 
                     rank.value = text;
+                    busy.running = false;
+                    busy.visible = false;
                 }
                 else {
                     rank.value = DB.getval(2);
@@ -116,6 +120,13 @@ CoverBackground {
         running: false
         repeat: true
         onTriggered: refresh()
+    }
+
+    BusyIndicator {
+            id: busy
+            size: BusyIndicatorSize.Large
+            anchors.centerIn: parent
+            running: false
     }
 
     Image {
