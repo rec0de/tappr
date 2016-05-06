@@ -86,7 +86,7 @@ Page {
 
             Label {
                 id: aboutme
-                text:   'I develop these apps as a hobby. Therefore, please don\'t expect them to work perfectly. If you like what I\'m doing, consider liking / commenting the app or following me on twitter. For a developer, knowing that people out there use & like your app is one of the greatest feelings ever.'
+                text:   'I develop these apps as a hobby. Therefore, please don\'t expect them to work perfectly. If you like what I\'m doing, consider liking / commenting the app, following me on twitter or supporting me on flattr. For a developer, knowing that people out there use & like your app is one of the greatest feelings ever.'
                 font.pixelSize: Theme.fontSizeSmall
                 wrapMode: Text.WordWrap
                 anchors {

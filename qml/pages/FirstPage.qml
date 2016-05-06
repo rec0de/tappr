@@ -629,7 +629,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r11)
+            onPressed: touch(r11)
         }
     }
 
@@ -643,7 +643,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r12)
+            onPressed: touch(r12)
         }
     }
 
@@ -657,7 +657,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r13)
+            onPressed: touch(r13)
         }
     }
 
@@ -671,7 +671,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r14)
+            onPressed: touch(r14)
         }
     }
 
@@ -685,7 +685,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r21)
+            onPressed: touch(r21)
         }
     }
 
@@ -699,7 +699,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r22)
+            onPressed: touch(r22)
         }
     }
 
@@ -713,7 +713,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r23)
+            onPressed: touch(r23)
         }
     }
 
@@ -727,7 +727,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r24)
+            onPressed: touch(r24)
         }
     }
 
@@ -741,7 +741,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r31)
+            onPressed: touch(r31)
         }
     }
 
@@ -755,7 +755,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r32)
+            onPressed: touch(r32)
         }
     }
 
@@ -769,7 +769,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r33)
+            onPressed: touch(r33)
         }
     }
 
@@ -783,7 +783,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r34)
+            onPressed: touch(r34)
         }
     }
 
@@ -797,7 +797,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r41)
+            onPressed: touch(r41)
         }
     }
 
@@ -811,7 +811,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r42)
+            onPressed: touch(r42)
         }
     }
 
@@ -825,7 +825,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r43)
+            onPressed: touch(r43)
         }
     }
 
@@ -839,7 +839,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r44)
+            onPressed: touch(r44)
         }
     }
 
@@ -853,7 +853,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r51)
+            onPressed: touch(r51)
         }
     }
 
@@ -867,7 +867,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r52)
+            onPressed: touch(r52)
         }
     }
 
@@ -881,7 +881,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r53)
+            onPressed: touch(r53)
         }
     }
 
@@ -895,7 +895,7 @@ Page {
         property bool active: false
         MouseArea {
             anchors.fill: parent
-            onClicked: touch(r54)
+            onPressed: touch(r54)
         }
     }
 
@@ -909,8 +909,7 @@ Page {
         id: start
         visible: true
         text: "tap to start"
-        font.pixelSize: 24
-        font.family: pixels.name
+        font.pixelSize: Theme.fontSizeLarge
         anchors.centerIn: parent
     }
 
@@ -919,7 +918,7 @@ Page {
         y: -5
         x: -5
         color: rect.color
-        height: 65
+        height: 70
         width: rect.width + 10
         border.color: '#ffffff'
         border.width: 5
@@ -940,8 +939,7 @@ Page {
                 id: info
                 text: 'Info'
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 42
-                font.family: pixels.name
+                font.pixelSize: Theme.fontSizeExtraLarge
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 width: parent.width/2
@@ -956,8 +954,7 @@ Page {
                 id: mute
                 text: 'Mute'
                 horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: 42
-                font.family: pixels.name
+                font.pixelSize: Theme.fontSizeExtraLarge
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
                 width: parent.width/2
@@ -967,21 +964,15 @@ Page {
                 }
             }
 
-
-
         }
     }
 
-
-
     Label {
         x: 10
-        y: 5
         id: score
         visible: true
         text: '0'
-        font.pixelSize: 42
-        font.family: pixels.name
+        font.pixelSize: Theme.fontSizeExtraLarge
         property int value: 0
         property int high: geths()
         property real speed: 5
@@ -995,11 +986,9 @@ Page {
     }
 
     Label {
-        y: 5
         id: logo
         text: 'Menu'
-        font.pixelSize: 42
-        font.family: pixels.name
+        font.pixelSize: Theme.fontSizeExtraLarge
         anchors.horizontalCenter: menu.horizontalCenter
     }
 

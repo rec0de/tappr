@@ -58,8 +58,8 @@ CoverBackground {
 
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                console.log('status', xhr.status, xhr.statusText)
-                console.log('response', xhr.responseText)
+                //console.log('status', xhr.status, xhr.statusText)
+                //console.log('response', xhr.responseText)
                 if(xhr.status >= 200 && xhr.status < 300) {
 
                     var text = xhr.responseText;
