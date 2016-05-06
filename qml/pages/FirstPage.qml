@@ -29,8 +29,6 @@ Page {
 
     }
 
-    FontLoader { id: pixels; source: "../img/pixelmix.ttf" }
-
     // Makes the start text blink
     function blink() {
         if(start.visible){
