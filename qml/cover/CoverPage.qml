@@ -22,6 +22,10 @@ CoverBackground {
             var oldscore = coverscore.text;
             coverscore.text = DB.getscore();
 
+            if(oldscore != coverscore.text){
+                tocheck = true;
+            }
+
             if(tocheck == true){
                 rank.text = getrank();
                 tocheck = false;
@@ -33,18 +37,16 @@ CoverBackground {
                     rank.text = getrank();
                 }
             }
-
-            if(oldscore != coverscore.text){
-                tocheck = true;
-            }
         }
     }
 
     function forcerefresh(){
-        busy.running = true;
         busy.visible = true;
-        refresh();
+
+        coverscore.text = DB.getscore();
+
         rank.text = getrank();
+
     }
 
     function isNumber(n) {
@@ -69,7 +71,6 @@ CoverBackground {
                     text = text.replace(patt1, '');
 
                     rank.value = text;
-                    busy.running = false;
                     busy.visible = false;
                 }
                 else {
@@ -126,7 +127,8 @@ CoverBackground {
             id: busy
             size: BusyIndicatorSize.Large
             anchors.centerIn: parent
-            running: false
+            visible: false
+            running: true
     }
 
     Image {

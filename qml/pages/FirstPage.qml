@@ -63,7 +63,7 @@ Page {
     function die() {
         ticker.running = false;        
         blinker.running = true;        
-        score.speed = 5;
+        score.speed = (5/960)*page.height; // Normalize speed acorss devices
         if(score.value > DB.getscore()){
             DB.setscore(score.value);
             score.high = score.value;
@@ -568,7 +568,7 @@ Page {
             }
 
            // Increase game speed
-           score.speed = score.speed + 0.015;
+           score.speed = score.speed + (0.015/960)*page.height;
 
 
         }
@@ -604,7 +604,7 @@ Page {
     Timer {
         id: updatesett
         interval: 3000
-        running: true
+        running: Qt.application.active
         repeat: true
         onTriggered: updatesettings()
     }
@@ -916,7 +916,7 @@ Page {
         y: -5
         x: -5
         color: rect.color
-        height: 70
+        height: score.height + 10
         width: rect.width + 10
         border.color: '#ffffff'
         border.width: 5
